@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login & Pendaftaran - Portal Budget SMCC</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-bg min-vh-100 d-flex align-items-center justify-content-center">
+
+  <!-- LOADING OVERLAY -->
+  <div id="loadingOverlay" style="display:none;">
+    <div class="spinner-border text-primary" role="status"></div>
+    <div class="mt-2 fw-semibold text-secondary" id="loadingText">Menghubungkan ke API Backend...</div>
+  </div>
+
+  <!-- KOTAK KACA UTAMA (GLASSMORPHISM) - MENYATU UTUH DI TENGAH -->
+  <div class="card glass-card p-4 p-md-5 shadow-lg" style="max-width: 620px; width: 92%;">
+    
+    <!-- HEADER LOGO & JUDUL -->
+    <div class="text-center mb-4">      
+      <div class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-semibold mb-2" style="font-size: 11px;">
+        ASTRA Infra Toll Road Tangerang-Merak
+      </div>
+      <h4 class="fw-bold text-dark mb-1">Portal Budget & Pelaporan SMCC</h4>
+      <p class="text-muted small mb-0">Departemen Sustainability Management & Corporate Communications</p>
+    </div>
+
+    <!-- KOTAK INPUT EMAIL KANTOR -->
+    <!-- KOTAK INPUT EMAIL KANTOR (VERTIKAL KE BAWAH) -->
+    <div id="emailLoginBox" class="p-4 rounded-4 border mb-3 text-center" style="background: rgba(255,255,255,0.14); backdrop-filter: blur(12px);">
+      <label class="form-label small fw-bold text-white mb-2" style="letter-spacing: 0.5px;">MASUKKAN EMAIL KANTOR ANDA:</label>
+      
+      <!-- Kolom Input Email -->
+      <div class="mb-3">
+        <input type="email" class="form-control text-center py-2.5" id="inputUserEmail" placeholder="nama@margamandala.co.id" value="a.zaenudin@margamandala.co.id">
+      </div>
+      
+      <!-- Tombol Masuk di Bagian Bawah (Lebar Penuh) -->
+      <div class="mb-2">
+        <button class="btn btn-primary w-100 py-2.5 fw-bold rounded-pill shadow-sm" type="button" onclick="submitEmailLogin()">
+          Masuk →
+        </button>
+      </div>
+
+      <div class="text-white-50 mt-2" style="font-size: 11px;">Sistem akan memverifikasi akses Anda langsung ke database.</div>
+    </div>
+
+    <!-- FORM REGISTRASI WIZARD (TERSEMBUNYI SAMPAI EMAIL DIVERIFIKASI) -->
+    <form id="formRegisterNew" onsubmit="handleWizardSubmit(event)" style="display:none;">
+      
+      <div class="alert alert-primary bg-primary bg-opacity-10 border-0 text-primary small py-2 px-3 mb-3 rounded-3 text-center">
+        Terdeteksi akun baru untuk: <strong id="detectedEmailText">-</strong>. Silakan lengkapi profil awal Anda.
+      </div>
+
+      <!-- Indikator Langkah (Dots) -->
+      <div class="wizard-steps-indicator" id="wizardDots">
+        <div class="step-dot active" id="dot-0"></div>
+        <div class="step-dot" id="dot-1"></div>
+        <div class="step-dot" id="dot-2"></div>
+      </div>
+
+      <div class="wizard-container">
+        <div class="wizard-track" id="wizardTrack" style="transform: translateX(0%);">
+          
+          <!-- SLIDE 1: Nama & Posisi -->
+          <div class="wizard-slide">
+            <div class="text-center mb-3">
+              <h6 class="fw-bold text-dark">Langkah 1: Identitas & Posisi</h6>
+              <p class="text-muted small">Masukkan nama dan Posisi Anda di departemen.</p>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Nama Tampilan</label>
+              <input type="text" class="form-control" id="regNama" placeholder="Contoh: Achmad Zaenudin">
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Posisi</label>
+              <input type="text" class="form-control" id="regRole" placeholder="Contoh: Corporate Communication / Sustainability Management">
+            </div>
+            <button type="button" class="btn btn-primary w-100 py-2 fw-bold rounded-pill mt-3 shadow-sm" onclick="nextWizardSlide(1)">
+              Lanjut ke Pilih Avatar →
+            </button>
+          </div>
+
+          <!-- SLIDE 2: Avatar Profil -->
+          <div class="wizard-slide">
+            <div class="text-center mb-3">
+              <h6 class="fw-bold text-dark">Langkah 2: Pilih Avatar Profil</h6>
+              <p class="text-muted small">Pilih dari koleksi SVG SMCC atau upload foto Anda.</p>
+            </div>
+            <div class="mb-3 text-center">
+              <div class="bg-white bg-opacity-50 rounded-3 border p-2 mb-2">
+                <div class="avatar-grid" id="loginAvatarGalleryGrid"></div>
+              </div>
+              <input type="hidden" id="regAvatarSelected" value="">
+            </div>
+            <div class="d-flex gap-2 mt-3">
+              <button type="button" class="btn btn-outline-secondary w-50 py-2 fw-semibold rounded-pill" onclick="prevWizardSlide(0)">← Kembali</button>
+              <button type="button" class="btn btn-primary w-50 py-2 fw-bold rounded-pill shadow-sm" onclick="nextWizardSlide(2)">Lanjut ke Bio Profil →</button>
+            </div>
+          </div>
+
+          <!-- SLIDE 3: Harapan / Bio 2027 & Selesai -->
+          <div class="wizard-slide">
+            <div class="text-center mb-3">
+              <h6 class="fw-bold text-dark">Langkah 3: Bio Profil</h6>
+              <p class="text-muted small">Tuliskan Bio Profil Anda</p>
+            </div>
+            <div class="mb-2">
+              <label class="form-label small fw-semibold">No. WhatsApp</label>
+              <input type="text" class="form-control form-control-sm mb-2" id="regWa" placeholder="0812xxxxxxxx">
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Bio Profil</label>
+              <textarea class="form-control" id="regBio" rows="2" placeholder="Contoh: SMCC Semakin Inovatif & Berdampak!"></textarea>
+            </div>
+            <div class="d-flex gap-2 mt-3">
+              <button type="button" class="btn btn-outline-secondary w-50 py-2 fw-semibold rounded-pill" onclick="prevWizardSlide(1)">← Kembali</button>
+              <button type="submit" class="btn btn-success w-50 py-2 fw-bold rounded-pill shadow-sm">✓ Selesai & Masuk</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </form>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

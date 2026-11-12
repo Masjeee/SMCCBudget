@@ -1,0 +1,336 @@
+/* =================================================================
+   PENGATURAN DASAR & FONT KORPORAT
+   ================================================================= */
+body {
+  background-color: #f4f6f9;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* =================================================================
+   BACKGROUND FOTO & GLASSMORPHISM (HALAMAN LOGIN / INDEX.HTML)
+   ================================================================= */
+.login-bg {
+  background: url('Background/SMCC.png') no-repeat center center fixed;
+  background-size: cover;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-bg::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.4); /* Gelap tipis 40% agar foto tetap hidup */
+  z-index: 1;
+}
+
+.login-bg .card,
+.login-bg > div:not(#loadingOverlay) {
+  position: relative;
+  z-index: 2;
+}
+
+/* KOTAK KACA UTAMA (GLASSMORPHISM ELEGAN & MANIS) */
+.glass-card {
+  background: rgba(255, 255, 255, 0.22) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35), 
+              inset 0 0 0 1px rgba(255, 255, 255, 0.3) !important;
+  border-radius: 28px !important;
+}
+
+.glass-card .card,
+.glass-card #emailLoginBox {
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-radius: 16px !important;
+}
+
+.glass-card .form-control {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  border-radius: 12px !important;
+}
+
+/* BADGE ASTRA INFRA ORANYE KORPORAT */
+.glass-card .badge,
+.glass-card .badge.bg-primary {
+  background-color: rgba(255, 115, 0, 0.25) !important;
+  color: #ffa133 !important;
+  border: 1px solid rgba(255, 115, 0, 0.4) !important;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+/* TOMBOL UTAMA ORANGE KORPORAT */
+.btn-primary {
+  background-color: #ff7300 !important;
+  border-color: #ff7300 !important;
+}
+.btn-primary:hover, .btn-primary:focus {
+  background-color: #e06500 !important;
+  border-color: #e06500 !important;
+}
+
+/* =================================================================
+   WIZARD SLIDER & INDIKATOR TITIK (LOGIN FORM)
+   ================================================================= */
+.wizard-container {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+}
+
+.wizard-track {
+  display: flex;
+  flex-wrap: nowrap;
+  transition: transform 0.4s ease-in-out;
+}
+
+.wizard-slide {
+  min-width: 100%;
+  flex-shrink: 0;
+  padding: 0 5px;
+}
+
+#loginAvatarGalleryGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.wizard-steps-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.step-dot {
+  width: 10px;
+  height: 10px;
+  background-color: #cbd5e1;
+  border-radius: 50%;
+  transition: all 0.3s ease-in-out;
+}
+
+.step-dot.active {
+  background-color: #ff7300;
+  width: 24px;
+  border-radius: 10px;
+}
+
+#loadingOverlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  z-index: 9999;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+}
+
+/* =================================================================
+   LAYOUT UTAMA PORTAL & SIDEBAR (DASHBOARD)
+   ================================================================= */
+.portal-wrapper {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #f8f9fa;
+  position: relative;
+}
+
+/* Sidebar dengan Gradasi Khas & Transisi Slide */
+.portal-sidebar {
+  width: 260px;
+  min-width: 260px;
+  background: linear-gradient(180deg, #1f1f1f 0%, #2b1810 100%) !important;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: 1050;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s ease;
+}
+
+/* Efek Slide Tertutup (Sidebar bergeser mulus ke kiri masuk ke luar layar) */
+.portal-sidebar.sidebar-collapsed {
+  transform: translateX(-100%);
+  position: absolute;
+}
+
+/* Konten Utama Otomatis Melebar Penuh saat sidebar tertutup */
+.portal-content {
+  flex-grow: 1;
+  width: calc(100% - 260px);
+  padding: 24px 32px;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.portal-wrapper.sidebar-full .portal-content,
+.portal-sidebar.sidebar-collapsed + .portal-content {
+  width: 100% !important;
+}
+
+/* =================================================================
+   KOMPONEN SIDEBAR (BRAND, MENU, WARNA & SUB-MENU)
+   ================================================================= */
+.sidebar-brand {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-menu {
+  padding: 16px 12px;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.sidebar-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.45);
+  padding: 0 12px 6px;
+}
+
+.sidebar-link {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+  transition: all 0.15s ease;
+  text-decoration: none;
+}
+
+.sidebar-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.sidebar-link.active {
+  background: #ff7300 !important;
+  color: #fff !important;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(255, 115, 0, 0.35);
+}
+
+.sidebar-footer {
+  padding: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Sub-Menu Sidebar Styling */
+.sidebar-submenu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 2px;
+  border-left: 2px solid rgba(255, 115, 0, 0.3);
+  margin-left: 14px;
+  padding-left: 10px !important;
+}
+
+.sidebar-sublink {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.65);
+  text-align: left;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  width: 100%;
+}
+
+.sidebar-sublink:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-sublink.active {
+  color: #ff851b !important;
+  font-weight: 600;
+  background: rgba(255, 115, 0, 0.12) !important;
+}
+
+/* =================================================================
+   KOMPONEN KARTU, TABEL, & LAINNYA
+   ================================================================= */
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.kpi-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+.kpi-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 4px; height: 100%;
+  background: #ff7300;
+}
+.kpi-card.success::after { background: #198754; }
+.kpi-card.warning::after { background: #ffc107; }
+.kpi-card.purple::after { background: #6f42c1; }
+
+.table-custom th {
+  background-color: #f8f9fa !important;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #495057;
+}
+.table-custom td {
+  vertical-align: middle;
+  font-size: 13px;
+}
+
+/* =================================================================
+   RESPONSIVE LAYAR KECIL & HANDPHONE
+   ================================================================= */
+@media (max-width: 991.98px) {
+  .portal-sidebar {
+    position: fixed;
+    left: -260px;
+    transform: none !important;
+  }
+  .portal-sidebar.show-sidebar {
+    left: 0;
+  }
+  .portal-content {
+    width: 100% !important;
+    padding: 15px !important;
+  }
+}

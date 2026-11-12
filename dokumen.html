@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Input Dokumen - Portal Budget SMCC</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-light">
+
+  <!-- LOADING OVERLAY -->
+  <div id="loadingOverlay" style="display:none;">
+    <div class="spinner-border text-primary" role="status"></div>
+    <div class="mt-2 fw-semibold text-secondary" id="loadingText">Menyimpan data ke Log Anggaran...</div>
+  </div>
+
+  <div class="portal-wrapper">
+    
+    <!-- SIDEBAR UTAMA (DISAMAKAN DENGAN DASHBOARD: INPUT & RIWAYAT TERPISAH) -->
+    <aside class="portal-sidebar" id="portalSidebar">
+      <div class="sidebar-brand d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+          <span class="fw-bold text-white sidebar-brand-text">Portal SMCC</span>
+        </div>
+        <button class="btn btn-sm text-white-50 d-lg-none" onclick="toggleSidebar()">✕</button>
+      </div>
+
+      <div class="sidebar-menu flex-grow-1">
+        <div class="sidebar-section-title">NAVIGASI UTAMA</div>
+        
+        <button class="sidebar-link" onclick="location.href='dashboard.html'">
+          <span>📊</span> <span class="link-text">Dashboard Budget</span>
+        </button>
+        <button class="sidebar-link active" onclick="location.href='dokumen.html'">
+          <span>📝</span> <span class="link-text">Input Dokumen</span>
+        </button>
+        <button class="sidebar-link " onclick="location.href='arsip.html'">
+          <span>📂</span> <span class="link-text">Arsip & Riwayat</span>
+        </button>
+        
+        <div class="sidebar-section-title mt-4">PENGATURAN</div>
+        <button class="sidebar-link" onclick="location.href='profil.html'">
+          <span>⚙️</span> <span class="link-text">Setelan Profil</span>
+        </button>
+      </div>
+
+      <!-- PROFIL USER DI BAWAH SIDEBAR -->
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div id="sidebarAvatarContainer"></div>
+          <div class="overflow-hidden sidebar-user-info">
+            <h6 class="mb-0 text-white text-truncate small fw-bold" id="sidebarUserName">Memuat...</h6>
+            <small class="text-white-50 text-truncate d-block" id="sidebarUserRole" style="font-size: 11px;">Staff</small>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-outline-light w-100 mt-3 rounded-pill py-1" style="font-size: 11px;" onclick="logoutUser()">Keluar Akun</button>
+      </div>
+    </aside>
+
+    <!-- KONTEN UTAMA (PANEL KANAN) -->
+    <main class="portal-content flex-grow-1">
+      
+      <!-- TOPBAR -->
+      <header class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 bg-white p-3 rounded-4 shadow-sm border gap-2">
+        <div class="d-flex align-items-center gap-3">
+          <button class="btn btn-light border rounded-circle p-2 d-flex align-items-center justify-content-center shadow-sm flex-shrink-0" onclick="toggleSidebar()" style="width: 38px; height: 38px;" title="Buka/Tutup Sidebar">
+            ☰
+          </button>
+          <h5 class="fw-bold text-dark m-0 fs-6 fs-md-5">Form Input Log Anggaran & Dokumen</h5>
+        </div>
+        <div class="text-secondary small fw-semibold text-md-end">
+          ASTRA Infra Toll Road Tangerang-Merak
+        </div>
+      </header>
+
+      <!-- FORM INPUT SESUAI PERMINTAAN -->
+      <section class="portal-page mb-5">
+        <div class="card p-4 shadow-sm border-0 mb-4">
+          <h5 class="fw-bold mb-3">Formulir Pengajuan Transaksi & Dokumen Baru</h5>
+          <p class="text-muted small">Nomor dokumen otomatis ter-generate dari sistem, dan PIC terisi sesuai akun login Anda.</p>
+
+          <form id="formInputLogAnggaran" onsubmit="handleLogAnggaranSubmit(event)">
+            
+            <div class="row g-3 mb-3">
+              <!-- Jenis Dokumen (IP, MI, ME) -->
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Jenis Dokumen (Config_Nomor)</label>
+                <select class="form-select" id="docJenisDokumen" required onchange="generateDocumentNumber(this.value)">
+                  <option value="">Pilih Jenis Dokumen...</option>
+                  <option value="IP">IP (IJIN PRINSIP)</option>
+                  <option value="MI">MI (MEMO INTERNAL)</option>
+                  <option value="ME">ME (MEMO EKSTERNAL)</option>
+                </select>
+              </div>
+
+              <!-- Nomor Dokumen (Auto dari Config_Nomor) -->
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Nomor Dokumen (Auto Generator)</label>
+                <input type="text" class="form-control bg-white" id="docNomorDokumen" placeholder="Pilih jenis dokumen terlebih dahulu..." readonly required>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <!-- Nama Anggaran & Aktivitas -->
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Nama & Kategori Anggaran</label>
+                <select class="form-select" id="docNamaAnggaran" required>
+                  <option value="">Memuat data anggaran...</option>
+                </select>
+              </div>
+
+              <!-- Periode Bulan -->
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Periode Bulan</label>
+                <select class="form-select" id="docPeriodeBulan" required>
+                  <option value="">Pilih Periode Bulan...</option>
+                  <option value="Januari">Januari</option>
+                  <option value="Februari">Februari</option>
+                  <option value="Maret">Maret</option>
+                  <option value="April">April</option>
+                  <option value="Mei">Mei</option>
+                  <option value="Juni">Juni</option>
+                  <option value="Juli">Juli</option>
+                  <option value="Agustus">Agustus</option>
+                  <option value="September">September</option>
+                  <option value="Oktober">Oktober</option>
+                  <option value="November">November</option>
+                  <option value="Desember">Desember</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <!-- Nama Kegiatan -->
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Nama Kegiatan</label>
+                <input type="text" class="form-control" id="docNamaKegiatan" placeholder="Contoh: Pelatihan Media Inovasi 2027" required>
+              </div>
+
+              <!-- Nominal Realisasi / Pengajuan -->
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Nominal Realisasi / Pengajuan (Rp)</label>
+                <input type="number" class="form-control" id="docNominalRealisasi" placeholder="Contoh: 5000000" required>
+              </div>
+            </div>
+
+            <!-- Ganti textarea rincian aktivitas dengan select dropdown -->
+            <div class="mb-3">
+                <label for="docRincianActivity" class="form-label">Rincian Aktivitas</label>
+                <select id="docRincianActivity" class="form-select" required>
+                    <option value="">Pilih Nama Anggaran terlebih dahulu...</option>
+                </select>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <!-- Kelengkapan PIC (Auto-filled akun login) -->
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Kelengkapan PIC (Auto Akun Aktif)</label>
+                <input type="text" class="form-control bg-white" id="docKelengkapanPIC" readonly required>
+              </div>
+
+              <!-- Keterangan Tambahan -->
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Keterangan Tambahan</label>
+                <input type="text" class="form-control" id="docKeterangan" placeholder="Catatan opsional...">
+              </div>
+            </div>
+
+            <!-- LAMPIRAN BERKAS / SCANNER / UPLOAD FILE -->
+            <div class="card p-3 bg-light border mb-3 rounded-4">
+              <h6 class="fw-bold mb-2 small text-dark">📸 Lampiran Berkas / Smart Scan (PDF, Word, Gambar)</h6>
+              <p class="text-muted small mb-3">Ambil foto via kamera atau unggah file dokumen/gambar langsung dari folder perangkat Anda.</p>
+
+              <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
+                <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3" onclick="startDocumentCamera()">
+                  Buka Kamera Scanner
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" id="btnCapture" style="display:none;" onclick="captureDocumentPhoto()">
+                  Capture / Ambill Foto
+                </button>
+                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3" id="btnCloseCamera" style="display:none;" onclick="stopDocumentCamera()">
+                  Tutup Kamera
+                </button>
+
+                <div class="ms-md-auto w-100 w-md-auto mt-2 mt-md-0">
+                  <input type="file" id="uploadFileFolder" class="form-control form-control-sm" accept="image/*,application/pdf,.doc,.docx" onchange="handleFileFromFolder(event)">
+                </div>
+              </div>
+
+              <!-- Live Video Stream -->
+              <div id="cameraContainer" class="mb-3 text-center" style="display:none;">
+                <div class="position-relative d-inline-block border rounded-4 overflow-hidden bg-dark shadow-sm" style="max-width: 100%;">
+                  <video id="cameraVideo" autoplay playsinline style="width: 100%; max-height: 280px; object-fit: cover;"></video>
+                  <div class="position-absolute bottom-0 start-50 translate-middle-x mb-2 badge bg-dark bg-opacity-75 px-3 py-1 text-light border border-light small">
+                    Posisikan dokumen di dalam bingkai
+                  </div>
+                </div>
+              </div>
+
+              <canvas id="cameraCanvas" style="display:none;"></canvas>
+
+              <!-- Hasil Pratinjau -->
+              <div id="scanResultContainer" style="display:none;" class="mt-2">
+                <div class="d-flex align-items-center gap-3 p-2 border rounded-3 bg-white">
+                  <img id="scannedImagePreview" src="" alt="Pratinjau" class="rounded-3 border shadow-sm" style="width: 70px; height: 70px; object-fit: cover;">
+                  <div>
+                    <span class="badge bg-success mb-1 small">Berkas Terlampir</span>
+                    <p class="small text-muted mb-0" id="fileInfoText">File siap dikirim ke sistem.</p>
+                    <button type="button" class="btn btn-link text-danger p-0 small mt-1 text-decoration-none" onclick="removeAttachedFile()">Hapus / Ganti File</button>
+                  </div>
+                </div>
+                <input type="hidden" id="scannedImageBase64" value="">
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary px-4 py-2 rounded-pill fw-semibold">
+              Simpan ke Log Anggaran (Sheets)
+            </button>
+          </form>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
